@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLESS Config Fixer</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --panel: #121a2b;
+    --panel2: #0f1728;
+    --border: #26324a;
+    --text: #eef3ff;
+    --muted: #98a6bf;
+    --accent: #6ea8fe;
+    --accent2: #8b7cff;
+    --success: #36d399;
+    --danger: #ff6b81;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Tahoma, Arial, sans-serif;
+    background:
+      radial-gradient(circle at top right, rgba(110,168,254,.13), transparent 32%),
+      radial-gradient(circle at bottom left, rgba(139,124,255,.10), transparent 28%),
+      var(--bg);
+    color: var(--text);
+  }
+
+  .wrap {
+    width: min(1100px, 94%);
+    margin: 32px auto 50px;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    margin: 0 0 10px;
+    font-size: clamp(28px, 5vw, 44px);
+  }
+
+  .hero p {
+    margin: 0 auto;
+    color: var(--muted);
+    max-width: 760px;
+    line-height: 1.9;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .card {
+    background: rgba(18, 26, 43, .92);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 15px 45px rgba(0,0,0,.22);
+    backdrop-filter: blur(10px);
+  }
+
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 18px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 430px;
+    resize: vertical;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--panel2);
+    color: var(--text);
+    padding: 15px;
+    font: 13px/1.7 Consolas, "Courier New", monospace;
+    outline: none;
+    direction: ltr;
+    text-align: left;
+  }
+
+  textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(110,168,254,.12);
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  button, .file-label {
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: #18223a;
+    color: var(--text);
+    padding: 11px 16px;
+    cursor: pointer;
+    font: inherit;
+    transition: .18s ease;
+  }
+
+  button:hover, .file-label:hover {
+    transform: translateY(-1px);
+    border-color: #43547a;
+  }
+
+  .primary {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: white;
+    border: none;
+    font-weight: bold;
+  }
+
+  .success {
+    background: rgba(54,211,153,.12);
+    border-color: rgba(54,211,153,.35);
+  }
+
+  .danger {
+    background: rgba(255,107,129,.10);
+    border-color: rgba(255,107,129,.28);
+  }
+
+  input[type=file] { display: none; }
+
+  .rules {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .rule {
+    background: rgba(255,255,255,.025);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px;
+    text-align: center;
+  }
+
+  .rule b {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .rule span {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .stat {
+    padding: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .stat strong {
+    display: block;
+    font-size: 21px;
+    margin-bottom: 5px;
+  }
+
+  .stat span {
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  .status {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(110,168,254,.08);
+    border: 1px solid rgba(110,168,254,.20);
+    color: #cfe0ff;
+    line-height: 1.8;
+    min-height: 48px;
+  }
+
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 18px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 850px) {
+    .grid { grid-template-columns: 1fr; }
+    .rules { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    textarea { min-height: 320px; }
+  }
+
+  @media (max-width: 480px) {
+    .wrap { width: 95%; margin-top: 18px; }
+    .card { padding: 13px; }
+    .rules, .stats { grid-template-columns: 1fr 1fr; }
+    .controls > * { flex: 1 1 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>VLESS Config Fixer</h1>
+    <p>
+      اصلاح خودکار کانفیگ‌های VLESS. ورودی معمولی و Base64 هر دو پشتیبانی می‌شوند
+      و اگر ورودی Base64 باشد، خروجی نیز Base64 باقی می‌ماند.
+    </p>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>کانفیگ ورودی</h2>
+      <textarea id="input" placeholder="VLESS یا Base64 را اینجا قرار بده..."></textarea>
+
+      <div class="controls">
+        <label class="file-label">
+          📁 انتخاب فایل
+          <input id="fileInput" type="file" accept=".txt,.conf,.md,.base64,text/plain">
+        </label>
+        <button id="fixBtn" class="primary">⚡ اصلاح کانفیگ‌ها</button>
+        <button id="clearBtn" class="danger">پاک کردن</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>خروجی</h2>
+      <textarea id="output" readonly placeholder="خروجی اینجا نمایش داده می‌شود..."></textarea>
+
+      <div class="controls">
+        <button id="copyBtn" class="success">📋 کپی خروجی</button>
+        <button id="downloadBtn">⬇️ دانلود vpn_fixed.txt</button>
+      </div>
+
+      <div id="status" class="status">آماده پردازش.</div>
+    </section>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><strong id="countVless">0</strong><span>VLESS</span></div>
+    <div class="stat"><strong id="countChanged">0</strong><span>اصلاح‌شده</span></div>
+    <div class="stat"><strong id="countOther">0</strong><span>خطوط دیگر</span></div>
+    <div class="stat"><strong id="format">—</strong><span>فرمت ورودی</span></div>
+  </div>
+
+  <div class="rules">
+    <div class="rule"><b>حذف fm</b><span>Final Mask حذف می‌شود</span></div>
+    <div class="rule"><b>حذف cs</b><span>Cipher Suites حذف می‌شود</span></div>
+    <div class="rule"><b>fp = chrome</b><span>Fingerprint تنظیم می‌شود</span></div>
+    <div class="rule"><b>ech = Cloudflare</b><span>ECH مقداردهی می‌شود</span></div>
+  </div>
+
+  <div class="footer">
+    پردازش به‌صورت کامل داخل مرورگر انجام می‌شود و هیچ کانفیگی به سرور ارسال نمی‌شود.
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const ECH_VALUE = "cloudflare-ech.com%2Budp%3A%2F%2F1.1.1.1";
+
+const inputEl = document.getElementById("input");
+const outputEl = document.getElementById("output");
+const fileInput = document.getElementById("fileInput");
+const fixBtn = document.getElementById("fixBtn");
+const clearBtn = document.getElementById("clearBtn");
+const copyBtn = document.getElementById("copyBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const statusEl = document.getElementById("status");
+
+const countVlessEl = document.getElementById("countVless");
+const countChangedEl = document.getElementById("countChanged");
+const countOtherEl = document.getElementById("countOther");
+const formatEl = document.getElementById("format");
+
+function looksLikeVless(text) {
+  return /vless:\\/\\//i.test(text) || /vless\\\\:\\/\\//i.test(text);
+}
+
+function tryDecodeBase64(text) {
+  const compact = text.replace(/\s+/g, "").trim();
+
+  if (!compact) return null;
+
+  try {
+    const padded = compact + "=".repeat((4 - compact.length % 4) % 4);
+    const binary = atob(padded);
+
+    // UTF-8 صحیح
+    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+    const decoded = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+
+    if (looksLikeVless(decoded)) {
+      return decoded;
+    }
+  } catch (e) {
+    return null;
+  }
+
+  return null;
+}
+
+function detectContent(raw) {
+  if (looksLikeVless(raw)) {
+    return { text: raw, isBase64: false };
+  }
+
+  const decoded = tryDecodeBase64(raw);
+
+  if (decoded !== null) {
+    return { text: decoded, isBase64: true };
+  }
+
+  return { text: raw, isBase64: false };
+}
+
+function fixVlessLine(line) {
+  let body = line;
+  let ending = "";
+
+  if (body.endsWith("\r\n")) {
+    ending = "\r\n";
+    body = body.slice(0, -2);
+  } else if (body.endsWith("\n") || body.endsWith("\r")) {
+    ending = body.slice(-1);
+    body = body.slice(0, -1);
+  }
+
+  // vless\:// -> vless://
+  if (body.startsWith("vless\\://")) {
+    body = "vless://" + body.slice("vless\\://".length);
+  }
+
+  if (!/^vless:\/\//i.test(body)) {
+    return line;
+  }
+
+  let fragment = "";
+  const hashIndex = body.indexOf("#");
+
+  if (hashIndex >= 0) {
+    fragment = body.slice(hashIndex);
+    body = body.slice(0, hashIndex);
+  }
+
+  let base = body;
+  let query = "";
+
+  const qIndex = body.indexOf("?");
+
+  if (qIndex >= 0) {
+    base = body.slice(0, qIndex);
+    query = body.slice(qIndex + 1);
+  }
+
+  const kept = [];
+
+  if (query) {
+    for (const part of query.split("&")) {
+      if (!part) continue;
+
+      const key = part.split("=", 1)[0].trim().toLowerCase();
+
+      // دقیقاً مواردی که باید حذف/جایگزین شوند
+      if ([
+        "fm",
+        "cs",
+        "fp",
+        "ech",
+        "echconfiglist"
+      ].includes(key)) {
+        continue;
+      }
+
+      kept.push(part);
+    }
+  }
+
+  // فرم مورد استفاده در کانفیگ دستی سالم
+  kept.push("fp=chrome");
+  kept.push("ech=" + ECH_VALUE);
+
+  return base + "?" + kept.join("&") + fragment + ending;
+}
+
+function fixText(text) {
+  const lines = text.split(/\r\n|\n|\r/);
+  const results = [];
+
+  let total = 0;
+  let changed = 0;
+  let other = 0;
+
+  for (let rawLine of lines) {
+    if (!rawLine.trim()) {
+      results.push(rawLine);
+      continue;
+    }
+
+    const normalized = rawLine
+      .replace(/^vless\\:\/\//i, "vless://");
+
+    if (/^vless:\/\//i.test(normalized.trim())) {
+      total++;
+
+      // بدون newline داخلی؛ در انتها خروجی را دوباره می‌سازیم.
+      const fixed = fixVlessLine(normalized);
+
+      results.push(fixed);
+
+      if (fixed !== rawLine) {
+        changed++;
+      }
+    } else {
+      results.push(rawLine);
+      other++;
+    }
+  }
+
+  return {
+    text: results.join("\n"),
+    total,
+    changed,
+    other
+  };
+}
+
+function encodeBase64(text) {
+  const bytes = new TextEncoder().encode(text);
+  let binary = "";
+
+  // جلوگیری از call stack بزرگ
+  const chunkSize = 0x8000;
+
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+
+  return btoa(binary);
+}
+
+function setStatus(message, type = "normal") {
+  statusEl.textContent = message;
+
+  if (type === "success") {
+    statusEl.style.borderColor = "rgba(54,211,153,.35)";
+    statusEl.style.background = "rgba(54,211,153,.08)";
+    statusEl.style.color = "#c8ffe9";
+  } else if (type === "error") {
+    statusEl.style.borderColor = "rgba(255,107,129,.35)";
+    statusEl.style.background = "rgba(255,107,129,.08)";
+    statusEl.style.color = "#ffd2da";
+  } else {
+    statusEl.style.borderColor = "rgba(110,168,254,.20)";
+    statusEl.style.background = "rgba(110,168,254,.08)";
+    statusEl.style.color = "#cfe0ff";
+  }
+}
+
+function resetStats() {
+  countVlessEl.textContent = "0";
+  countChangedEl.textContent = "0";
+  countOtherEl.textContent = "0";
+  formatEl.textContent = "—";
+}
+
+function processConfigs() {
+  const raw = inputEl.value;
+
+  if (!raw.trim()) {
+    setStatus("چیزی برای پردازش وارد نشده است.", "error");
+    return;
+  }
+
+  const detected = detectContent(raw);
+  const result = fixText(detected.text);
+
+  let finalOutput = result.text;
+
+  if (detected.isBase64) {
+    finalOutput = encodeBase64(finalOutput);
+  }
+
+  outputEl.value = finalOutput;
+
+  countVlessEl.textContent = String(result.total);
+  countChangedEl.textContent = String(result.changed);
+  countOtherEl.textContent = String(result.other);
+  formatEl.textContent = detected.isBase64 ? "Base64" : "Text";
+
+  setStatus(
+    `${result.total} کانفیگ VLESS پیدا شد و ${result.changed} مورد اصلاح شد. ` +
+    `فرمت خروجی: ${detected.isBase64 ? "Base64" : "Text"}`,
+    "success"
+  );
+}
+
+fixBtn.addEventListener("click", processConfigs);
+
+clearBtn.addEventListener("click", () => {
+  inputEl.value = "";
+  outputEl.value = "";
+  resetStats();
+  setStatus("صفحه پاک شد.");
+  fileInput.value = "";
+});
+
+copyBtn.addEventListener("click", async () => {
+  if (!outputEl.value) {
+    setStatus("ابتدا کانفیگ‌ها را اصلاح کن.", "error");
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(outputEl.value);
+    setStatus("خروجی با موفقیت کپی شد.", "success");
+  } catch (e) {
+    outputEl.select();
+    document.execCommand("copy");
+    setStatus("خروجی کپی شد.", "success");
+  }
+});
+
+downloadBtn.addEventListener("click", () => {
+  if (!outputEl.value) {
+    setStatus("ابتدا کانفیگ‌ها را اصلاح کن.", "error");
+    return;
+  }
+
+  const blob = new Blob([outputEl.value], {
+    type: "text/plain;charset=utf-8"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "vpn_fixed.txt";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+
+  setStatus("فایل vpn_fixed.txt دانلود شد.", "success");
+});
+
+fileInput.addEventListener("change", async () => {
+  const file = fileInput.files && fileInput.files[0];
+
+  if (!file) return;
+
+  try {
+    inputEl.value = await file.text();
+    setStatus(`فایل «${file.name}» خوانده شد. حالا روی «اصلاح کانفیگ‌ها» بزن.`);
+  } catch (e) {
+    setStatus("خواندن فایل ناموفق بود.", "error");
+  }
+});
+</script>
+</body>
+</html>
